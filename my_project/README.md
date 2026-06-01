@@ -1,54 +1,85 @@
-# MyProject Crew
+# AI Research Crew
 
-Welcome to the MyProject Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Multi-agent AI research system built with [crewAI](https://crewai.com). Two agents collaborate to research a topic and produce a structured report.
 
-## Installation
+## Agents
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+- **Researcher** — Searches the web for the latest developments on a given topic
+- **Reporting Analyst** — Synthesizes research findings into a detailed markdown report
 
-First, if you haven't already, install uv:
+## Tools
+
+- `ScrapeWebsiteTool` — enables the researcher to fetch and read web page content (no API key required)
+- `CustomTool` — placeholder for additional tooling (see `src/my_project/tools/custom_tool.py`)
+
+## Setup
+
+**Requirements:** Python >=3.10 <3.14, [UV](https://docs.astral.sh/uv/)
 
 ```bash
 pip install uv
-```
-
-Next, navigate to your project directory and install the dependencies:
-
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
+cd my_project
 crewai install
 ```
-### Customizing
 
-**Add your `OPENAI_API_KEY` into the `.env` file**
+### Environment Variables
 
-- Modify `src/my_project/config/agents.yaml` to define your agents
-- Modify `src/my_project/config/tasks.yaml` to define your tasks
-- Modify `src/my_project/crew.py` to add your own logic, tools and specific args
-- Modify `src/my_project/main.py` to add custom inputs for your agents and tasks
+Copy or rename `.env` with the following:
 
-## Running the Project
-
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
-
-```bash
-$ crewai run
+```env
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENAI_API_BASE=https://openrouter.ai/api/v1
+MODEL=openrouter/nvidia/nemotron-3-super-120b-a12b:free
 ```
 
-This command initializes the my_project Crew, assembling the agents and assigning them tasks as defined in your configuration.
+You can swap the model for any [OpenRouter-compatible model](https://openrouter.ai/models) by changing `MODEL`.
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+## Usage
 
-## Understanding Your Crew
+```bash
+crewai run
+```
 
-The my_project Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
+To change the research topic, edit the `inputs` dict in `src/my_project/main.py`:
 
-## Support
+```python
+inputs = {
+    'topic': 'AI LLMs',
+    'current_year': str(datetime.now().year)
+}
+```
 
-For support, questions, or feedback regarding the MyProject Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
+Output is written to `report.md`.
 
-Let's create wonders together with the power and simplicity of crewAI.
+### Other Commands
+
+```bash
+crewai test -n 2 -m gpt-4o-mini   # Evaluate crew performance
+crewai train -n 5 -f training.json   # Train with examples
+```
+
+## Customizing
+
+- `src/my_project/config/agents.yaml` — agent roles, goals, backstories
+- `src/my_project/config/tasks.yaml` — task descriptions and expected outputs
+- `src/my_project/crew.py` — agent logic, tools, and crew configuration
+- `src/my_project/main.py` — entry point and runtime inputs
+
+## Project Structure
+
+```
+my_project/
+├── src/my_project/
+│   ├── config/
+│   │   ├── agents.yaml
+│   │   └── tasks.yaml
+│   ├── tools/
+│   │   └── custom_tool.py
+│   ├── crew.py
+│   └── main.py
+├── knowledge/
+│   └── user_preference.txt
+├── .env
+├── pyproject.toml
+└── README.md
+```
