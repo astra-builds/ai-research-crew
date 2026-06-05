@@ -5,10 +5,14 @@ import warnings
 
 from datetime import datetime
 
+from dotenv import load_dotenv
+
 from grandjury import GrandJury
 from my_project.crew import MyProject
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
+
+load_dotenv()
 
 
 def run():
