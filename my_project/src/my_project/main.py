@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import os
 import sys
 import warnings
 
 from datetime import datetime
 
+from grandjury import GrandJury
 from my_project.crew import MyProject
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
@@ -19,7 +21,14 @@ def run():
     }
 
     try:
-        MyProject().crew().kickoff(inputs=inputs)
+        gj = GrandJury()
+        result = MyProject().crew().kickoff(inputs=inputs)
+        gj.trace(
+            name="crewai-research",
+            input=inputs["topic"],
+            output=str(result),
+            model=os.environ["MODEL"],
+        )
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")
 
